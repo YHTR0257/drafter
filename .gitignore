@@ -1,0 +1,28 @@
+# 作成論文
+papers/
+figures/
+
+# 各種LaTeX中間ファイル
+*.aux
+*.log
+*.toc
+*.out
+*.synctex.gz
+*.dvi
+*.fls
+*.fdb_latexmk
+*.bbl
+*.blg
+*.bcf
+*.run.xml
+
+# 成果物（distはバージョン管理に含める場合はコメントアウト）
+# papers/*/dist/
+
+# Python
+__pycache__/
+*.pyc
+.uv/
+
+# VS Code
+.vscode/settings.json

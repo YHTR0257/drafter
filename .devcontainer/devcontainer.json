@@ -37,5 +37,11 @@
   "remoteUser": "vscode",
   "workspaceFolder": "/workspace",
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
+  "remoteEnv": {
+    "SSH_AUTH_SOCK": "/run/host-services/ssh-auth.sock"
+  },
+  "mounts": [
+    "type=bind,src=/run/host-services/ssh-auth.sock,dst=/run/host-services/ssh-auth.sock"
+  ],
   "postCreateCommand": "bash .devcontainer/post-create.sh"
 }

@@ -1,4 +1,5 @@
-~#!/usr/bin/env bash
+sudo chmod 666 /run/host-services/ssh-auth.sock
+
 set -euo pipefail
 
 mkdir -p "$HOME/.claude" /tmp/latex-build

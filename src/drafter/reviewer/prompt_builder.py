@@ -47,8 +47,11 @@ def load_rules(rules_dir: Path, section_label: str) -> dict[str, Any] | None:
     for name in candidates:
         path = rules_dir / f"{name}.yaml"
         if path.exists():
-            with path.open(encoding="utf-8") as f:
-                loaded = yaml.safe_load(f)
+            try:
+                with path.open(encoding="utf-8") as f:
+                    loaded = yaml.safe_load(f)
+            except yaml.YAMLError:
+                continue
             if isinstance(loaded, dict):
                 return loaded
     return None

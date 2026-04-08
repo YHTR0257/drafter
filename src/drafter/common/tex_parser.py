@@ -115,10 +115,20 @@ class TexParser:
     # ------------------------------------------------------------------
 
     def _extract_sections(self, content: str) -> list[Section]:
-        """トップレベルのセクションリストを抽出する。"""
+        """トップレベルのセクションリストを抽出する。
+
+        文書内で実際に使われている最上位のセクションレベルを自動検出する。
+        chapter があれば chapter を起点に、なければ section を起点にする。
+        """
         lines = content.splitlines(keepends=True)
         tokens = self._tokenize(lines)
-        return self._build_tree(tokens, level_idx=0)
+
+        used_levels = {str(tok["level"]) for tok in tokens if tok["type"] == "section"}
+        if not used_levels:
+            return []
+
+        start_idx = min(_SECTION_LEVELS.index(lv) for lv in used_levels if lv in _SECTION_LEVELS)
+        return self._build_tree(tokens, level_idx=start_idx)
 
     def _tokenize(self, lines: list[str]) -> list[dict[str, object]]:
         """行リストをセクション境界・テキスト・環境のトークン列に変換する。"""

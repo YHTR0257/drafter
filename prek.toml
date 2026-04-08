@@ -3,10 +3,10 @@
 repo = "https://github.com/pre-commit/pre-commit-hooks"
 rev = "v6.0.0"
 hooks = [
-  { id = "check-yaml" },
-  { id = "check-toml" },
-  { id = "end-of-file-fixer" },
-  { id = "trailing-whitespace" },
+  { id = "check-yaml", exclude = "^(uv\\.lock|prek\\.toml)$" },
+  { id = "check-toml", exclude = "^(uv\\.lock|prek\\.toml)$" },
+  { id = "end-of-file-fixer", exclude = "^(uv\\.lock|prek\\.toml)$" },
+  { id = "trailing-whitespace", exclude = "^(uv\\.lock|prek\\.toml)$" },
 ]
 
 # Python lint + format
@@ -14,8 +14,8 @@ hooks = [
 repo = "https://github.com/astral-sh/ruff-pre-commit"
 rev = "v0.15.0"
 hooks = [
-  { id = "ruff-check", args = ["--fix"] },
-  { id = "ruff-format" },
+  { id = "ruff-check", args = ["--fix"], exclude = "^(uv\\.lock|prek\\.toml)$" },
+  { id = "ruff-format", exclude = "^(uv\\.lock|prek\\.toml)$" },
 ]
 
 # Python type check
@@ -23,7 +23,7 @@ hooks = [
 repo = "https://github.com/pre-commit/mirrors-mypy"
 rev = "v1.16.0"
 hooks = [
-  { id = "mypy" },
+  { id = "mypy", exclude = "^(uv\\.lock|prek\\.toml)$" },
 ]
 
 # 行長チェック
@@ -31,15 +31,12 @@ hooks = [
 repo = "https://github.com/editorconfig-checker/editorconfig-checker.python"
 rev = "3.2.1"
 hooks = [
-  { id = "editorconfig-checker", alias = "ec" },
+  { id = "editorconfig-checker", alias = "ec", exclude = "^(uv\\.lock|prek\\.toml)$" },
 ]
 
 # ファイルタイプ禁止
 [[repos]]
 repo = "local"
 hooks = [
-  { id = "forbid-png-pdf-tex",
-    name = "Forbid .png, .pdf and .tex files",
-    entry = "bash -c 'echo \"Error: .png/.pdf/.tex files should not be committed\" >&2; exit 1'",
-    language = "system", files = "\\.(png|pdf|tex)$", pass_filenames = false },
+  { id = "forbid-png-pdf-tex", name = "Forbid .png, .pdf and .tex files", entry = "bash -c 'echo \"Error: .png/.pdf/.tex files should not be committed\" >&2; exit 1'", language = "system", files = "\\.(png|pdf|tex)$", pass_filenames = false, exclude = "^(uv\\.lock|prek\\.toml)$" },
 ]

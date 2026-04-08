@@ -28,6 +28,9 @@ explicit_package_bases = true
 mypy_path = "src"
 disable_error_code = ["misc"]
 
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
 [tool.ruff]
 line-length = 100
 target-version = "py311"

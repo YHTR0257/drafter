@@ -34,6 +34,9 @@ templates/msword
 # devcontainer
 .devcontainer/*
 !.devcontainer/devcontainer.json
+!.devcontainer/Dockerfile
+!.devcontainer/docker-compose.yml
+!.devcontainer/post-create.sh
 
 # VS Code
 .vscode/settings.json

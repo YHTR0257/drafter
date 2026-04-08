@@ -2,6 +2,8 @@ sudo chmod 666 /run/host-services/ssh-auth.sock
 
 set -euo pipefail
 
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
 mkdir -p "$HOME/.claude" /tmp/latex-build
 
 # Avoid touching bind-mounted .git metadata that may not allow ownership changes.

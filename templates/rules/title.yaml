@@ -1,0 +1,36 @@
+section: title
+required: true
+
+meta:
+  structure: compact
+  description: >
+    研究の主題、着眼点、対象を短く圧縮して示すタイトル構造で構成する。
+    各要素は上から順に、取り組む問題、問題解決の着眼点、研究対象へ進むこと。
+
+elements:
+  - id: problem
+    order: 1
+    name: 取り組む問題
+    description: >
+      何を解く研究かを示す。
+      「Xの課題」「Xの最適化」「Xの予測」のように、研究の中心問題が一目で分かる形にする。
+    example: >
+      ○○構造の最適化
+
+  - id: viewpoint
+    order: 2
+    name: 問題解決の着眼点
+    description: >
+      既存研究との差分となる観点を示す。
+      「Yに着目した」「Yを用いた」「Yに基づく」のように、解法の特徴が伝わる表現にする。
+    example: >
+      生成機構に着目した
+
+  - id: target
+    order: 3
+    name: 研究対象
+    description: >
+      適用範囲を示す。
+      「Z材料」「Zデータセット」「Z条件下」のように、何に対する研究かが具体的に分かる表現にする。
+    example: >
+      軽量多孔質材料

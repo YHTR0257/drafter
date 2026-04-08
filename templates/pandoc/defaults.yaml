@@ -1,0 +1,4 @@
+from: latex+raw_tex
+to: docx
+standalone: true
+wrap: none

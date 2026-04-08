@@ -1,3 +1,12 @@
+# <<<<<<<< Python <<<<<<<<<
+__pycache__/
+*.pyc
+.uv/
+
+# >>>>>>>> Python >>>>>>>>
+
+# <<<<<<<< LaTeX <<<<<<<<<
+
 # 作成論文
 papers/
 figures/
@@ -16,13 +25,19 @@ figures/
 *.bcf
 *.run.xml
 
-# 成果物（distはバージョン管理に含める場合はコメントアウト）
-# papers/*/dist/
+# word templates
+templates/msword
 
-# Python
-__pycache__/
-*.pyc
-.uv/
+# >>>>>>> LaTeX >>>>>>>>
+
+# <<<<<<< Infrastructure <<<<<<<
+# devcontainer
+.devcontainer/*
+!.devcontainer/devcontainer.json
 
 # VS Code
 .vscode/settings.json
+
+# GitHub Codespaces
+.github/codespaces/*
+# >>>>>>> Infrastructure >>>>>>>>

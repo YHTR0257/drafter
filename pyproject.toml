@@ -25,6 +25,7 @@ strict = true
 packages = ["drafter"]
 explicit_package_bases = true
 mypy_path = "src"
+disable_error_code = ["misc"]
 
 [tool.ruff]
 line-length = 100

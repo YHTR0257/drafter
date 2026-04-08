@@ -17,8 +17,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     fontconfig \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Gemini CLI
-RUN npm install -g @google/gemini-cli
+# Install npm packages globally
+RUN npm install -g @google/gemini-cli @j178/prek
 
 ENV DEVCONTAINER=true
 

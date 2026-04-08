@@ -3,10 +3,10 @@
 repo = "https://github.com/pre-commit/pre-commit-hooks"
 rev = "v6.0.0"
 hooks = [
-  { id = "check-yaml", exclude = "^(uv\\.lock|prek\\.toml)$" },
-  { id = "check-toml", exclude = "^(uv\\.lock|prek\\.toml)$" },
-  { id = "end-of-file-fixer", exclude = "^(uv\\.lock|prek\\.toml)$" },
-  { id = "trailing-whitespace", exclude = "^(uv\\.lock|prek\\.toml)$" },
+  { id = "check-yaml", exclude = "^(uv\\.lock|prek\\.toml|CLAUDE\\.md)$" },
+  { id = "check-toml", exclude = "^(uv\\.lock|prek\\.toml|CLAUDE\\.md)$" },
+  { id = "end-of-file-fixer", exclude = "^(uv\\.lock|prek\\.toml|CLAUDE\\.md)$" },
+  { id = "trailing-whitespace", exclude = "^(uv\\.lock|prek\\.toml|CLAUDE\\.md)$" },
 ]
 
 # Python lint + format
@@ -14,8 +14,8 @@ hooks = [
 repo = "https://github.com/astral-sh/ruff-pre-commit"
 rev = "v0.15.0"
 hooks = [
-  { id = "ruff-check", args = ["--fix"], exclude = "^(uv\\.lock|prek\\.toml)$" },
-  { id = "ruff-format", exclude = "^(uv\\.lock|prek\\.toml)$" },
+  { id = "ruff-check", args = ["--fix"], exclude = "^(uv\\.lock|prek\\.toml|CLAUDE\\.md)$" },
+  { id = "ruff-format", exclude = "^(uv\\.lock|prek\\.toml|CLAUDE\\.md)$" },
 ]
 
 # Python type check
@@ -23,7 +23,7 @@ hooks = [
 repo = "https://github.com/pre-commit/mirrors-mypy"
 rev = "v1.16.0"
 hooks = [
-  { id = "mypy", exclude = "^(uv\\.lock|prek\\.toml)$" },
+  { id = "mypy", exclude = "^(uv\\.lock|prek\\.toml|CLAUDE\\.md)$" },
 ]
 
 # 行長チェック
@@ -31,7 +31,7 @@ hooks = [
 repo = "https://github.com/editorconfig-checker/editorconfig-checker.python"
 rev = "3.2.1"
 hooks = [
-  { id = "editorconfig-checker", alias = "ec", exclude = "^(uv\\.lock|prek\\.toml)$" },
+  { id = "editorconfig-checker", alias = "ec", exclude = "^(uv\\.lock|prek\\.toml|CLAUDE\\.md)$" },
 ]
 
 # ファイルタイプ禁止

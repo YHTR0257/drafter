@@ -1,7 +1,17 @@
+# <<<<<<<< drafter <<<<<<<<<
+# ユーザー固有の設定ファイル（config/drafter.yaml.example をコピーして作成）
+config/drafter.yaml
+# >>>>>>>> drafter >>>>>>>>
+
 # <<<<<<<< Python <<<<<<<<<
 __pycache__/
 *.pyc
 .uv/
+.venv/
+mypy_cache/
+.pytest_cache/
+coverage.xml
+htmlcov/
 
 # >>>>>>>> Python >>>>>>>>
 

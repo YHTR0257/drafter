@@ -1,0 +1,12 @@
+llm:
+  endpoint: "https://api.openai.com/v1"
+  model: "gpt-4o"
+  max_context_tokens: 128000
+  # api_key は環境変数 DRAFTER_API_KEY で設定してください
+  # api_key: "sk-..."
+
+# llama.cpp を使う場合の例:
+# llm:
+#   endpoint: "http://localhost:8080/v1"
+#   model: "local-model"
+#   max_context_tokens: 32768

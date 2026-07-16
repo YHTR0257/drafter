@@ -1,5 +1,3 @@
-sudo chmod 666 /run/host-services/ssh-auth.sock
-
 set -euo pipefail
 
 curl -LsSf https://astral.sh/uv/install.sh | sh

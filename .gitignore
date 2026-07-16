@@ -53,4 +53,7 @@ templates/msword
 
 # GitHub Codespaces
 .github/codespaces/*
+
+# MacOS
+.DS_Store
 # >>>>>>> Infrastructure >>>>>>>>

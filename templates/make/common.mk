@@ -41,7 +41,7 @@ all: pdf docx
 review: $(REVIEW_REPORT)
 
 $(REVIEW_REPORT): $(TEX_SOURCES) | $(DIST_DIR)
-	python -m drafter.reviewer.runner \
+	uv run python -m drafter.reviewer.pipeline \
 		--input $(MAIN_TEX) \
 		--rules-dir $(RULES_DIR) \
 		--output $@
@@ -50,16 +50,14 @@ $(REVIEW_REPORT): $(TEX_SOURCES) | $(DIST_DIR)
 # lint: 構文チェック・Pandoc互換化（失敗時ビルドをブロック）
 # ============================================================
 lint:
-	python -m drafter.linter.runner \
+	uv run python -m drafter.linter.pipeline \
 		--input $(MAIN_TEX)
 
 # ============================================================
 # pdf: LaTeXコンパイル（lint通過が前提）
 # ============================================================
-pdf: lint $(DIST_PDF)
-
-$(DIST_PDF): $(TEX_SOURCES) $(BIB_SOURCES) $(FIG_SOURCES) | $(DIST_DIR)
-	latexmk -pdf -output-directory=$(DIST_DIR) $(MAIN_TEX)
+pdf: lint | $(DIST_DIR)
+	latexmk -lualatex -output-directory=$(DIST_DIR) $(MAIN_TEX)
 
 # ============================================================
 # docx: Pandoc変換（lint通過が前提）
@@ -67,7 +65,7 @@ $(DIST_PDF): $(TEX_SOURCES) $(BIB_SOURCES) $(FIG_SOURCES) | $(DIST_DIR)
 docx: lint $(DIST_DOCX)
 
 $(DIST_DOCX): $(TEX_SOURCES) $(BIB_SOURCES) | $(DIST_DIR)
-	python -m drafter.converter.runner \
+	uv run python -m drafter.converter.pipeline \
 		--input $(MAIN_TEX) \
 		$(PANDOC_BIB_FLAGS) \
 		--template $(TEMPLATES_WORD_DIR)/$(WORD_TEMPLATE) \

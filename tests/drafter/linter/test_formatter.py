@@ -5,7 +5,7 @@ linter/formatter.py のミラーテスト。
 
 from pathlib import Path
 
-from drafter.linter.formatter import _apply_formatting, format_file
+from drafter.formatter.pipeline import _apply_formatting, format_file
 
 
 # ---------------------------------------------------------------------------
@@ -17,6 +17,14 @@ class TestApplyFormatting:
     def test_removes_trailing_spaces(self) -> None:
         result = _apply_formatting("hello   \nworld  \n")
         assert result == "hello\nworld\n"
+
+    def test_replaces_japanese_comma(self) -> None:
+        result = _apply_formatting("a、b\n")
+        assert result == "a,b\n"
+
+    def test_replaces_compat_kanji(self) -> None:
+        result = _apply_formatting("原⼦と⼒学\n")
+        assert result == "原子と力学\n"
 
     def test_collapses_triple_blank_lines(self) -> None:
         result = _apply_formatting("a\n\n\n\nb\n")
@@ -72,3 +80,22 @@ class TestFormatFile:
         f.write_text(content, encoding="utf-8")
         format_file(f)
         assert f.read_text(encoding="utf-8") == content
+
+
+class TestFormatInputTree:
+    def test_formats_root_and_inputs(self, tmp_path: Path) -> None:
+        child = tmp_path / "sections"
+        child.mkdir()
+        main = tmp_path / "main.tex"
+        part = child / "method.tex"
+
+        main.write_text("\\input{sections/method}\nroot、text\n", encoding="utf-8")
+        part.write_text("child、text\n", encoding="utf-8")
+
+        from drafter.formatter.pipeline import format_input_tree
+
+        changed = format_input_tree(main)
+
+        assert changed == 2
+        assert main.read_text(encoding="utf-8") == "\\input{sections/method}\nroot,text\n"
+        assert part.read_text(encoding="utf-8") == "child,text\n"

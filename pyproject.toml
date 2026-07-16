@@ -14,12 +14,8 @@ dependencies = [
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.uv]
-dev-dependencies = [
-    "mypy>=1.20.0",
-    "pytest>=9.0.3",
-    "types-pyyaml>=6.0.12.20260408",
-]
+[dependency-groups]
+dev = ["mypy>=1.20.0", "pytest>=9.0.3", "types-pyyaml>=6.0.12.20260408"]
 
 [tool.mypy]
 strict = true

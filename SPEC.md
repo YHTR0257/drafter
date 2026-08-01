@@ -18,9 +18,9 @@
 | `reviewer/splitter.py` | Document をコンテキスト長以内のチャンクに段階分割 |
 | `reviewer/prompt_builder.py` | チャンク + `templates/rules/*.yaml` + 出力指示からプロンプト構築 |
 | `reviewer/client.py` | OpenAI互換APIクライアント（llama.cpp も対応、APIキー不要で動作） |
-| `reviewer/runner.py` | review 全体の実行制御 → `dist/review-report.md` 出力 |
+| `reviewer/pipeline.py` | review 全体の実行制御 → `dist/review-report.md` 出力 |
 
-各 runner は `python -m drafter.<module>.runner` で直接起動できる（click CLI）。
+各 pipeline は `python -m drafter.<module>.pipeline` で直接起動できる（click CLI）。
 
 ### Paper structure (`papers/<name>/`)
 
@@ -110,7 +110,7 @@ src/drafter/                    tests/drafter/
 ```
 
 - pytest の設定は `pyproject.toml` の `[tool.pytest.ini_options]` で管理（`pytest.ini` は不要）
-- `runner.py` は外部依存（API・Pandoc・latexmk）があるためユニットテスト対象外。構成要素を個別にテストする方針
+- `pipeline.py` は外部依存（API・Pandoc・latexmk）があるためユニットテスト対象外。構成要素を個別にテストする方針
 - テストヘルパーは各テストファイル内にローカル定義し、共通 `conftest.py` は設けない（依存関係を明示的に保つ）
 
 ## Key constraints

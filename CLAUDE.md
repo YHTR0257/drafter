@@ -25,8 +25,8 @@ uv run ruff format src/              # format
 make pdf         # lint → LaTeX → dist/main.pdf
 make docx        # lint → Pandoc → dist/main.docx
 make docx-review # 校閲用DOCX（1段組・行間2行・行番号） → dist/main-review.docx
-make review      # AI review via drafter.reviewer.runner → dist/review-report.md
-make lint        # run drafter.linter.runner only
+make review      # AI review via drafter.reviewer.pipeline → dist/review-report.md
+make lint        # run drafter.linter.pipeline only
 make clean       # remove dist/
 ```
 

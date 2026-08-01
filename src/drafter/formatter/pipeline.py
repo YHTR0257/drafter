@@ -35,6 +35,98 @@ _FULLWIDTH_SPACE_RE = re.compile("　")
 # A comma/period immediately followed by a non-space character.
 _PUNCT_SPACE_RE = re.compile(r"[,.](?=\S)")
 
+# Commands whose arguments are identifiers, paths or key=value options rather
+# than prose. Inserting a space there breaks references and file paths, so
+# their arguments are excluded from spacing. Prose-bearing commands such as
+# \section and \caption are deliberately absent: their text is formatted.
+_VERBATIM_ARG_COMMANDS = frozenset(
+    {
+        "input",
+        "include",
+        "includegraphics",
+        "graphicspath",
+        "label",
+        "ref",
+        "eqref",
+        "pageref",
+        "autoref",
+        "cite",
+        "citep",
+        "citet",
+        "citealp",
+        "citealt",
+        "citeauthor",
+        "citeyear",
+        "citenum",
+        "nocite",
+        "bibliography",
+        "bibliographystyle",
+        "usepackage",
+        "RequirePackage",
+        "documentclass",
+        "setmainfont",
+        "setsansfont",
+        "setmonofont",
+        "setmainjfont",
+        "setsansjfont",
+        "setmonojfont",
+        "newfontfamily",
+        "url",
+        "href",
+        "path",
+    }
+)
+
+_COMMAND_RE = re.compile(r"\\([A-Za-z]+)")
+_GROUP_DELIMITERS = {"{": "}", "[": "]"}
+
+
+def _closing_delimiter(text: str, start: int) -> int | None:
+    """Return the index closing the group opened at ``start``, or None.
+
+    Handles nesting and backslash escapes, so ``{{a}{b}}`` and ``\\{`` are
+    counted correctly.
+    """
+    opening = text[start]
+    closing = _GROUP_DELIMITERS[opening]
+    depth = 0
+    index = start
+    while index < len(text):
+        char = text[index]
+        if char == "\\":
+            index += 2  # escaped character: neither delimiter nor content
+            continue
+        if char == opening:
+            depth += 1
+        elif char == closing:
+            depth -= 1
+            if depth == 0:
+                return index
+        index += 1
+    return None
+
+
+def _verbatim_arg_spans(text: str) -> list[tuple[int, int]]:
+    r"""Return (start, end) index pairs covering non-prose command arguments.
+
+    Only groups written immediately after the command name are collected, so a
+    ``[`` that merely follows a command elsewhere in the sentence is not
+    mistaken for an optional argument. Multi-line arguments such as the
+    fontspec options of ``\setmainfont{...}[...]`` are covered.
+    """
+    spans: list[tuple[int, int]] = []
+    for match in _COMMAND_RE.finditer(text):
+        if match.group(1) not in _VERBATIM_ARG_COMMANDS:
+            continue
+        index = match.end()
+        while index < len(text) and text[index] in _GROUP_DELIMITERS:
+            end = _closing_delimiter(text, index)
+            if end is None:
+                break
+            spans.append((index, end))
+            index = end + 1
+    return spans
+
 
 def _is_cjk(ch: str) -> bool:
     """Return True for Japanese script characters (kana / kanji / fullwidth)."""
@@ -57,10 +149,17 @@ def _space_after_punct(text: str) -> str:
     (``05-conclusion.tex``), LaTeX commands (``Fig.\ref``) and decimals
     (``0.2`` / ``1,000``) untouched. End-of-line punctuation is unaffected
     because a newline is whitespace for the ``(?=\S)`` lookahead.
+
+    Arguments of identifier/path commands are skipped as well, so a Japanese
+    file name or label such as ``\includegraphics{図.jpg}`` survives even
+    though it does have a CJK character next to the punctuation.
     """
+    protected = _verbatim_arg_spans(text)
 
     def repl(m: re.Match[str]) -> str:
         i = m.start()
+        if any(start <= i <= end for start, end in protected):
+            return m.group(0)
         before = text[i - 1] if i > 0 else ""
         after = text[m.end()]  # guaranteed to exist by the (?=\S) lookahead
         # Keep the "Fig." abbreviation glued to its reference (e.g. Fig.\ref).

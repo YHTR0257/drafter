@@ -4,12 +4,20 @@
 # ============================================================
 
 PAPERS_DIR := papers
-PAPERS     := $(wildcard $(PAPERS_DIR)/*)
+# Makefileを持つディレクトリのみ対象（papers/bib, papers/dist などを除外）
+PAPERS     := $(patsubst %/Makefile,%,$(wildcard $(PAPERS_DIR)/*/Makefile))
+WORD_TEMPLATE_DIR := templates/msword
 
-.PHONY: all review-all lint-all pdf-all docx-all clean-all
+.PHONY: all review-all lint-all pdf-all docx-all docx-review-all word-templates clean-all
 
 # --- デフォルト: 全文書のpdf+docx ---
 all: pdf-all docx-all
+
+# --- Wordテンプレート生成 ---
+# templates/msword/ はgitignore対象のため、クローン直後はこれで生成する
+word-templates:
+	uv run python -m drafter.converter.word_template_pipeline \
+		--output-dir $(WORD_TEMPLATE_DIR)
 
 # --- 一括ターゲット ---
 review-all:
@@ -34,6 +42,12 @@ docx-all:
 	@for paper in $(PAPERS); do \
 		echo "==== docx: $$paper ===="; \
 		$(MAKE) -C $$paper docx || exit 1; \
+	done
+
+docx-review-all:
+	@for paper in $(PAPERS); do \
+		echo "==== docx-review: $$paper ===="; \
+		$(MAKE) -C $$paper docx-review || exit 1; \
 	done
 
 clean-all:

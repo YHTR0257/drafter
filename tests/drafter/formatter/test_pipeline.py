@@ -1,6 +1,6 @@
-"""tests/drafter/linter/test_formatter.py
+"""tests/drafter/formatter/test_pipeline.py
 
-linter/formatter.py のミラーテスト。
+formatter/pipeline.py のミラーテスト。
 """
 
 from pathlib import Path

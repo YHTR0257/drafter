@@ -10,11 +10,11 @@
 |---|---|
 | `common/tex_parser.py` | `\input{}` 展開・セクション階層抽出・環境認識・トークン推定。linter/reviewer 共通基盤 |
 | `common/config.py` | `config/drafter.yaml` + 環境変数でLLM設定を管理（オプションC方式） |
-| `converter/runner.py` | LaTeX → DOCX（Pandoc呼び出し）。`converter/config.py` でコマンド組み立て |
-| `converter/pipeline.py` | `\input{}` 展開 → 中間 .tex → Pandoc の2段変換 |
+| `converter/pipeline.py` | LaTeX → DOCX。`\input{}` 展開 → 中間 .tex → Pandoc の2段変換 |
+| `converter/config.py` | Pandoc コマンドの組み立てと中間ファイルのパス導出 |
 | `converter/word_template.py` | Pandoc `--reference-doc` 用 Word テンプレートの組み立て |
-| `linter/runner.py` | LaTeX 構文・Pandoc互換チェック。`linter/rules/pandoc_compat.py` にルール実装 |
-| `linter/formatter.py` | 行末スペース除去・連続空行正規化（自動修正） |
+| `linter/pipeline.py` | LaTeX 構文・Pandoc互換チェック。`linter/rules/pandoc_compat.py` にルール実装 |
+| `formatter/pipeline.py` | 行末スペース除去・連続空行正規化・和文約物の正規化（自動修正） |
 | `reviewer/splitter.py` | Document をコンテキスト長以内のチャンクに段階分割 |
 | `reviewer/prompt_builder.py` | チャンク + `templates/rules/*.yaml` + 出力指示からプロンプト構築 |
 | `reviewer/client.py` | OpenAI互換APIクライアント（llama.cpp も対応、APIキー不要で動作） |
@@ -103,7 +103,7 @@ src/drafter/                    tests/drafter/
 ├── common/config.py        →   ├── common/test_config.py
 ├── reviewer/splitter.py    →   ├── reviewer/test_splitter.py
 ├── reviewer/prompt_builder →   ├── reviewer/test_prompt_builder.py
-├── linter/formatter.py     →   ├── linter/test_formatter.py
+├── formatter/pipeline.py   →   ├── formatter/test_pipeline.py
 ├── linter/rules/pandoc_compat→ ├── linter/rules/test_pandoc_compat.py
 ├── converter/config.py     →   ├── converter/test_config.py（中間ファイルのパス導出含む）
 └── converter/word_template →   └── converter/test_word_template.py

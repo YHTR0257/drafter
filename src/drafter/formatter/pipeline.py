@@ -10,8 +10,14 @@ import click
 # Collapse 3+ consecutive blank lines into 2.
 _MULTI_BLANK_RE = re.compile(r"\n{3,}")
 
-# Normalize Japanese comma to ASCII comma.
-_JAPANESE_COMMA_RE = re.compile("、")
+# Normalize full-width Japanese punctuation to ASCII.
+_JAPANESE_PUNCT_MAP: dict[str, str] = {
+    "、": ",",  # U+3001 ideographic comma
+    "，": ",",  # U+FF0C fullwidth comma
+    "。": ".",  # U+3002 ideographic full stop
+    "．": ".",  # U+FF0E fullwidth full stop
+}
+_JAPANESE_PUNCT_RE = re.compile("|".join(map(re.escape, _JAPANESE_PUNCT_MAP)))
 
 # Normalize compatibility CJK radicals to common kanji.
 _COMPAT_KANJI_MAP: dict[str, str] = {
@@ -22,6 +28,49 @@ _COMPAT_KANJI_MAP: dict[str, str] = {
     "⽬": "目",
 }
 _COMPAT_KANJI_RE = re.compile("|".join(map(re.escape, _COMPAT_KANJI_MAP)))
+
+# Full-width space (U+3000) is removed entirely.
+_FULLWIDTH_SPACE_RE = re.compile("　")
+
+# A comma/period immediately followed by a non-space character.
+_PUNCT_SPACE_RE = re.compile(r"[,.](?=\S)")
+
+
+def _is_cjk(ch: str) -> bool:
+    """Return True for Japanese script characters (kana / kanji / fullwidth)."""
+    if not ch:
+        return False
+    o = ord(ch)
+    return (
+        0x3040 <= o <= 0x30FF  # Hiragana + Katakana
+        or 0x3400 <= o <= 0x9FFF  # CJK Unified Ideographs (incl. ext. A)
+        or 0xF900 <= o <= 0xFAFF  # CJK Compatibility Ideographs
+        or 0xFF00 <= o <= 0xFFEF  # Halfwidth / Fullwidth Forms
+    )
+
+
+def _space_after_punct(text: str) -> str:
+    r"""Insert a single ASCII space after ``,`` / ``.`` in Japanese prose.
+
+    A space is added only when the character on either side of the punctuation
+    is a Japanese (CJK) character. This keeps ASCII contexts such as file paths
+    (``05-conclusion.tex``), LaTeX commands (``Fig.\ref``) and decimals
+    (``0.2`` / ``1,000``) untouched. End-of-line punctuation is unaffected
+    because a newline is whitespace for the ``(?=\S)`` lookahead.
+    """
+
+    def repl(m: re.Match[str]) -> str:
+        i = m.start()
+        before = text[i - 1] if i > 0 else ""
+        after = text[m.end()]  # guaranteed to exist by the (?=\S) lookahead
+        # Keep the "Fig." abbreviation glued to its reference (e.g. Fig.\ref).
+        if m.group(0) == "." and text[max(0, i - 3) : i] == "Fig":
+            return m.group(0)
+        if _is_cjk(before) or _is_cjk(after):
+            return m.group(0) + " "
+        return m.group(0)
+
+    return _PUNCT_SPACE_RE.sub(repl, text)
 
 
 def format_file(path: Path) -> bool:
@@ -48,7 +97,9 @@ def _apply_formatting(content: str) -> str:
     lines = [line.rstrip() for line in content.splitlines()]
     joined = "\n".join(lines)
 
-    joined = _JAPANESE_COMMA_RE.sub(",", joined)
+    joined = _FULLWIDTH_SPACE_RE.sub("", joined)
+    joined = _JAPANESE_PUNCT_RE.sub(lambda m: _JAPANESE_PUNCT_MAP[m.group(0)], joined)
+    joined = _space_after_punct(joined)
     joined = _COMPAT_KANJI_RE.sub(lambda m: _COMPAT_KANJI_MAP[m.group(0)], joined)
 
     if content.endswith("\n"):

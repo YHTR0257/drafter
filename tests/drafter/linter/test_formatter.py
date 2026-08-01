@@ -19,12 +19,74 @@ class TestApplyFormatting:
         assert result == "hello\nworld\n"
 
     def test_replaces_japanese_comma(self) -> None:
-        result = _apply_formatting("a、b\n")
-        assert result == "a,b\n"
+        result = _apply_formatting("あ、い\n")
+        assert result == "あ, い\n"
+
+    def test_replaces_fullwidth_comma(self) -> None:
+        result = _apply_formatting("あ，い\n")
+        assert result == "あ, い\n"
+
+    def test_replaces_ideographic_period(self) -> None:
+        result = _apply_formatting("あ。い\n")
+        assert result == "あ. い\n"
+
+    def test_replaces_fullwidth_period(self) -> None:
+        result = _apply_formatting("あ．い\n")
+        assert result == "あ. い\n"
 
     def test_replaces_compat_kanji(self) -> None:
         result = _apply_formatting("原⼦と⼒学\n")
         assert result == "原子と力学\n"
+
+    def test_removes_fullwidth_space(self) -> None:
+        result = _apply_formatting("　図3に示す\n")
+        assert result == "図3に示す\n"
+
+    def test_space_after_comma(self) -> None:
+        result = _apply_formatting("あ,い\n")
+        assert result == "あ, い\n"
+
+    def test_space_after_period(self) -> None:
+        result = _apply_formatting("示す.また\n")
+        assert result == "示す. また\n"
+
+    def test_ascii_filename_not_spaced(self) -> None:
+        # File paths / extensions must stay intact (no CJK neighbours).
+        result = _apply_formatting("\\input{sections/05-conclusion.tex}\n")
+        assert result == "\\input{sections/05-conclusion.tex}\n"
+
+    def test_fig_abbreviation_not_spaced(self) -> None:
+        result = _apply_formatting("Fig.\\ref{fig:a}に示す\n")
+        assert result == "Fig.\\ref{fig:a}に示す\n"
+
+    def test_fig_before_cjk_not_spaced(self) -> None:
+        result = _apply_formatting("Fig.また\n")
+        assert result == "Fig.また\n"
+
+    def test_decimal_point_preserved(self) -> None:
+        result = _apply_formatting("$\\nu$が0.2以下\n")
+        assert result == "$\\nu$が0.2以下\n"
+
+    def test_thousands_separator_preserved(self) -> None:
+        result = _apply_formatting("1,000個\n")
+        assert result == "1,000個\n"
+
+    def test_existing_space_after_comma_not_doubled(self) -> None:
+        result = _apply_formatting("$C_{11}$, $C_{12}$\n")
+        assert result == "$C_{11}$, $C_{12}$\n"
+
+    def test_end_of_line_period_not_spaced(self) -> None:
+        result = _apply_formatting("示した.\n")
+        assert result == "示した.\n"
+
+    def test_fullwidth_period_gets_spaced(self) -> None:
+        result = _apply_formatting("示す．また\n")
+        assert result == "示す. また\n"
+
+    def test_spacing_is_idempotent(self) -> None:
+        once = _apply_formatting("示す.また,示した.\n")
+        twice = _apply_formatting(once)
+        assert once == twice
 
     def test_collapses_triple_blank_lines(self) -> None:
         result = _apply_formatting("a\n\n\n\nb\n")
@@ -89,13 +151,13 @@ class TestFormatInputTree:
         main = tmp_path / "main.tex"
         part = child / "method.tex"
 
-        main.write_text("\\input{sections/method}\nroot、text\n", encoding="utf-8")
-        part.write_text("child、text\n", encoding="utf-8")
+        main.write_text("\\input{sections/method}\nルート、本文\n", encoding="utf-8")
+        part.write_text("子、本文\n", encoding="utf-8")
 
         from drafter.formatter.pipeline import format_input_tree
 
         changed = format_input_tree(main)
 
         assert changed == 2
-        assert main.read_text(encoding="utf-8") == "\\input{sections/method}\nroot,text\n"
-        assert part.read_text(encoding="utf-8") == "child,text\n"
+        assert main.read_text(encoding="utf-8") == "\\input{sections/method}\nルート, 本文\n"
+        assert part.read_text(encoding="utf-8") == "子, 本文\n"

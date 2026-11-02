@@ -23,7 +23,7 @@ hooks = [
 repo = "https://github.com/pre-commit/mirrors-mypy"
 rev = "v1.16.0"
 hooks = [
-  { id = "mypy", exclude = "^(uv\\.lock|prek\\.toml|CLAUDE\\.md)$", additional_dependencies = ["pyyaml", "types-PyYAML", "openai", "click"] },
+  { id = "mypy", exclude = "^(uv\\.lock|prek\\.toml|CLAUDE\\.md)$", additional_dependencies = ["pyyaml", "types-PyYAML", "openai<2", "click"] },
 ]
 
 # 行長チェック

@@ -43,5 +43,6 @@
   "mounts": [
     "type=bind,src=/run/host-services/ssh-auth.sock,dst=/run/host-services/ssh-auth.sock"
   ],
-  "postCreateCommand": "bash .devcontainer/post-create.sh"
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "postStartCommand": "sudo chmod 666 /run/host-services/ssh-auth.sock || true"
 }

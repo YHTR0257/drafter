@@ -1,8 +1,7 @@
-sudo chmod 666 /run/host-services/ssh-auth.sock
-
 set -euo pipefail
 
 curl -LsSf https://astral.sh/uv/install.sh | sh
+curl -fsSL https://claude.ai/install.sh | bash
 
 mkdir -p "$HOME/.claude" /tmp/latex-build
 

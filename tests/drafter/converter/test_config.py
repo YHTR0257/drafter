@@ -3,9 +3,14 @@
 converter/config.py のミラーテスト。
 """
 
+import os
 from pathlib import Path
 
-from drafter.converter.config import build_pandoc_command, load_pandoc_defaults
+from drafter.converter.config import (
+    build_expanded_tex_path,
+    build_pandoc_command,
+    load_pandoc_defaults,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -91,3 +96,40 @@ class TestBuildPandocCommand:
     def test_citeproc_not_added_when_no_bibliography(self, tmp_path: Path) -> None:
         cmd = build_pandoc_command(tmp_path / "main.tex", tmp_path / "out.docx", [], None, None)
         assert "--citeproc" not in cmd
+
+    def test_resource_path_joined_into_single_flag(self, tmp_path: Path) -> None:
+        paths = [Path("."), Path("../../figures")]
+        cmd = build_pandoc_command(
+            tmp_path / "main.tex", tmp_path / "out.docx", [], None, None, paths
+        )
+        flags = [c for c in cmd if c.startswith("--resource-path=")]
+        assert flags == [f"--resource-path=.{os.pathsep}../../figures"]
+
+    def test_resource_path_omitted_when_empty(self, tmp_path: Path) -> None:
+        empty: list[list[Path] | None] = [[], None]
+        for resource_path in empty:
+            cmd = build_pandoc_command(
+                tmp_path / "main.tex", tmp_path / "out.docx", [], None, None, resource_path
+            )
+            assert not any(c.startswith("--resource-path") for c in cmd)
+
+
+# ---------------------------------------------------------------------------
+# build_expanded_tex_path
+# ---------------------------------------------------------------------------
+
+
+class TestBuildExpandedTexPath:
+    def test_derives_sibling_tex_from_output(self) -> None:
+        assert build_expanded_tex_path(Path("dist/main.docx")) == Path("dist/main.expanded.tex")
+
+    def test_review_output_gets_its_own_intermediate(self) -> None:
+        """docx と review-docx を並列生成しても中間ファイルが衝突しないこと。"""
+        docx = build_expanded_tex_path(Path("dist/main.docx"))
+        review = build_expanded_tex_path(Path("dist/main-review.docx"))
+        assert review == Path("dist/main-review.expanded.tex")
+        assert docx != review
+
+    def test_stays_in_the_output_directory(self, tmp_path: Path) -> None:
+        output = tmp_path / "dist" / "main.docx"
+        assert build_expanded_tex_path(output).parent == output.parent

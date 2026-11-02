@@ -101,9 +101,25 @@ Pandoc は `\graphicspath` を解釈しないので、`--resource-path`（`commo
 
 - カスタムエージェント定義は共有できない。Claude Code は Markdown + YAML frontmatter
   （`.claude/agents/*.md`）、Codex は TOML（`.codex/agents/*.toml`）で形式が異なる。
-  `.agents/agents/` は Claude Code 形式の正本で、`.codex/agents` は置かない
+  `.agents/agents/` は Claude Code 形式の正本とし、Codex 用は `.codex/agents/` に
+  TOML の実ファイルとして個別に管理する。symlink や変換ツールは追加しない
 - スキルは `<skill-name>/SKILL.md` 形式で共有する。frontmatter の `name` と `description` は必須
 - `.claude/settings.json` は Claude 固有のため実ファイルのまま管理する
+
+#### Codex カスタムエージェント (`.codex/agents/`)
+
+各 TOML は `name`・`description`・`developer_instructions` を定義する。
+モデルは指定せず親の設定を引き継ぐ。実装用のカスタムエージェントは追加しない。
+
+| エージェント | 役割 |
+|---|---|
+| `paper-writer` | 資料・研究結果に基づく専門文書の執筆・改稿。主張と根拠を対応させる |
+| `paper-reviewer` | 正確さ・根拠・論理・再現性の読み取り専用レビュー |
+| `pr-creator` | 明示指示を受けた差分のコミットと、ユーザー承認後のリモート変更 |
+
+`paper-reviewer` は既存の `drafter.reviewer` と同じくセクション単位で評価し、
+日本語の箇条書きで `[重要度: 高/中/低]` と修正案を示す。
+構造ルールに加え、専門的な内容の妥当性を評価する。既存の Python レビュー処理は変更しない。
 
 ### Fonts
 

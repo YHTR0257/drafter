@@ -1,0 +1,28 @@
+services:
+  drafter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    user: "${HOST_UID:?Set HOST_UID in .env}:${HOST_GID:?Set HOST_GID in .env}"
+    working_dir: /workspace
+    volumes:
+      - type: bind
+        source: .
+        target: /workspace
+      - type: bind
+        source: ${PAPERS_DIR:?Set PAPERS_DIR in .env}
+        target: /workspace/papers
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${BIB_DIR:?Set BIB_DIR in .env}
+        target: /workspace/papers/bib
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${FONTS_DIR:?Set FONTS_DIR in .env}
+        target: /usr/share/fonts/ms-fonts
+        read_only: true
+        bind:
+          create_host_path: false

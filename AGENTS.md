@@ -9,7 +9,22 @@ in this repository. `CLAUDE.md` is a symlink to this file; edit `AGENTS.md`.
 
 ## Commands
 
-### Python (run from `/workspace`)
+### Container builds (run on the host)
+
+```bash
+make build                          # build the Docker image
+make up                             # start an idle container (optional)
+make bash                           # open a disposable shell
+make build-pdf PAPER=<paper-name>
+make build-docx PAPER=<paper-name>
+make build-docx PAPER=<paper-name> FORMAT=short  # article / short / review
+make down
+```
+
+Compose reads host paths from `.env` (see `.env.example`). Make detects host UID/GID.
+Container tools use `uv run`; make runs on the host.
+
+### Python (run on the host for development)
 
 ```bash
 uv run python -m drafter.<module>   # run a drafter module
@@ -20,7 +35,7 @@ uv run ruff check --fix src/         # lint
 uv run ruff format src/              # format
 ```
 
-### Paper build (run from `papers/<paper-name>/`)
+### Legacy paper build (existing local environment, `papers/<paper-name>/`)
 
 ```bash
 make pdf         # lint → LaTeX → dist/main.pdf
@@ -31,15 +46,10 @@ make lint        # run drafter.linter.pipeline only
 make clean       # remove dist/
 ```
 
-### Bulk operations (run from `/workspace`)
+### Word templates (run on the host)
 
 ```bash
-make word-templates  # Wordテンプレートを生成（templates/msword/）
-make pdf-all         # build all papers to PDF
-make docx-all        # build all papers to DOCX
-make docx-review-all # build all papers to review DOCX
-make review-all      # review all papers
-make lint-all        # lint all papers
+make word-templates  # generate Word templates through the container
 ```
 
 ### Pre-commit hooks (`prek`)

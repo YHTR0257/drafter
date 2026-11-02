@@ -18,6 +18,48 @@ LaTeX論文執筆環境とPythonユーティリティ群。Dev Container上で�
 
 Dev Containerを開くと `post-create.sh` が自動実行され、`prek install` まで完了する。
 
+## Compose 検証（Issue #2）
+
+ホスト編集 + コンテナビルドの検証用。旧環境の撤去は未実施。
+Docker Compose v2 を使用する。ホストに TeX / Pandoc / Python はビルド用途では不要。
+
+```bash
+cp .env.example .env
+# .env の論文・bib・フォントのパスを設定（make が UID/GID を自動取得）
+# main.tex のフォント指定: Path=/usr/share/fonts/ms-fonts/
+make build
+make up                         # 常駐コンテナ（任意）
+make bash                       # 一時コンテナでシェルを開く
+make build-pdf PAPER=<name>
+make build-docx PAPER=<name>
+make build-docx PAPER=<name> FORMAT=short  # article / short / review
+make down
+```
+
+`PAPERS_DIR` は論文ディレクトリ群の親、`BIB_DIR` は共有 bib の実体。
+ホスト側の絶対パス symlink はコンテナで解決できないので、実体を指定する。
+フォントは読み取り専用マウントし、イメージに同梱しない。
+依存関係を変更した場合は `make build` を再実行する。
+DOCX は `FORMAT=article`（既定・長文）、`short`（2段組）、`review`（校閲用）で体裁を選ぶ。
+いずれも `dist/main.docx` に出力し、再実行時は上書きする。
+テンプレートは未生成時に自動生成する。
+既定では lint エラーで停止する。既知の指摘を保留して出力を確認する場合のみ
+`make build-docx PAPER=<name> FORMAT=article SKIP_LINT=1` で明示的にスキップできる。
+`make word-templates` で明示的に生成することもできる。
+コンテナ内は `uv run` で Python / latexmk / Pandoc を実行し、make は使わない。
+WSL では Linux のパスとユーザー ID を設定する（実機検証は未実施）。
+
+既存論文を変更せずサンプルで確認する場合（ホストに Bash / Python 3 が必要）:
+
+```bash
+docker compose --env-file .env.example build
+FONTS_DIR=/absolute/path/to/fonts bash scripts/verify-compose.sh
+```
+
+検証は `times.ttf` / `msmincho.ttc` を使う。
+フォントパス未指定時は既存のローカルフォント置き場を利用する。
+出力先はスクリプトが表示する一時ディレクトリ。
+
 ## ディレクトリ構成
 
 ```
@@ -57,14 +99,8 @@ make lint     # 構文チェックのみ
 make clean    # dist/ を削除
 ```
 
-全論文を一括処理する場合はリポジトリルートから：
-
-```bash
-make pdf-all
-make docx-all
-make review-all
-make lint-all
-```
+ホストのリポジトリルートからは `make build-pdf PAPER=<name>` 等を使う。
+上記の論文別 Makefile は既存環境向けに残している。
 
 ### Pythonツールの実行
 

@@ -57,3 +57,8 @@ templates/msword
 # MacOS
 .DS_Store
 # >>>>>>> Infrastructure >>>>>>>>
+
+# Compose host paths and local feasibility fixtures
+.env
+.env.*
+!.env.example

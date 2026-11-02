@@ -1,57 +1,48 @@
-# ============================================================
-# drafter - Root Makefile
-# 全文書の一括操作
-# ============================================================
+# Host entry points. All paper tools run through uv inside Docker.
+.DEFAULT_GOAL := help
+DOCKER_COMPOSE ?= docker compose
+export HOST_UID ?= $(shell id -u)
+export HOST_GID ?= $(shell id -g)
+PAPER ?=
+MAIN_TEX ?= main.tex
+WORD_TEMPLATE_DIR ?= /workspace/templates/msword
+FORMAT ?= article
+SKIP_LINT ?= 0
+WORD_TEMPLATE ?= template-$(FORMAT).docx
 
-PAPERS_DIR := papers
-# Makefileを持つディレクトリのみ対象（papers/bib, papers/dist などを除外）
-PAPERS     := $(patsubst %/Makefile,%,$(wildcard $(PAPERS_DIR)/*/Makefile))
-WORD_TEMPLATE_DIR := templates/msword
+.PHONY: help build up down bash build-pdf build-docx lint review \
+        word-templates check-paper
 
-.PHONY: all review-all lint-all pdf-all docx-all docx-review-all word-templates clean-all
+help:
+	@echo 'make build | up | down | bash'
+	@echo 'make build-pdf | build-docx | lint | review PAPER=<name> [FORMAT=article|short|review]'
+	@echo 'make word-templates'
 
-# --- デフォルト: 全文書のpdf+docx ---
-all: pdf-all docx-all
+build:
+	$(DOCKER_COMPOSE) build
 
-# --- Wordテンプレート生成 ---
-# templates/msword/ はgitignore対象のため、クローン直後はこれで生成する
+up:
+	$(DOCKER_COMPOSE) up -d
+
+down:
+	$(DOCKER_COMPOSE) down
+
+bash:
+	$(DOCKER_COMPOSE) run --rm drafter bash
+
+check-paper:
+	@test -n "$(PAPER)" || { echo 'Specify PAPER=<directory name>' >&2; exit 1; }
+
+build-pdf build-docx lint review: check-paper
+	@case "$(FORMAT)" in article|short|review) ;; \
+		*) echo 'FORMAT must be article, short or review' >&2; exit 1 ;; esac
+	$(DOCKER_COMPOSE) run --rm \
+		-e SKIP_LINT="$(SKIP_LINT)" \
+		-e WORD_TEMPLATE_DIR="$(WORD_TEMPLATE_DIR)" \
+		-e WORD_TEMPLATE="$(WORD_TEMPLATE)" \
+		drafter bash /workspace/scripts/build-paper.sh \
+		"$(patsubst build-%,%,$@)" "$(PAPER)" "$(MAIN_TEX)"
+
 word-templates:
-	uv run python -m drafter.converter.word_template_pipeline \
-		--output-dir $(WORD_TEMPLATE_DIR)
-
-# --- 一括ターゲット ---
-review-all:
-	@for paper in $(PAPERS); do \
-		echo "==== review: $$paper ===="; \
-		$(MAKE) -C $$paper review || exit 1; \
-	done
-
-lint-all:
-	@for paper in $(PAPERS); do \
-		echo "==== lint: $$paper ===="; \
-		$(MAKE) -C $$paper lint || exit 1; \
-	done
-
-pdf-all:
-	@for paper in $(PAPERS); do \
-		echo "==== pdf: $$paper ===="; \
-		$(MAKE) -C $$paper pdf || exit 1; \
-	done
-
-docx-all:
-	@for paper in $(PAPERS); do \
-		echo "==== docx: $$paper ===="; \
-		$(MAKE) -C $$paper docx || exit 1; \
-	done
-
-docx-review-all:
-	@for paper in $(PAPERS); do \
-		echo "==== docx-review: $$paper ===="; \
-		$(MAKE) -C $$paper docx-review || exit 1; \
-	done
-
-clean-all:
-	@for paper in $(PAPERS); do \
-		echo "==== clean: $$paper ===="; \
-		$(MAKE) -C $$paper clean; \
-	done
+	$(DOCKER_COMPOSE) run --rm drafter uv run python \
+		-m drafter.converter.word_template_pipeline --output-dir "$(WORD_TEMPLATE_DIR)"

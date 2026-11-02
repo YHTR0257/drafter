@@ -1,6 +1,6 @@
 # SPEC.md
 
-`drafter` リポジトリの詳細仕様（構成・テスト方針・制約）。日常的なコマンドは [AGENTS.md](AGENTS.md) を参照。
+`drafter` リポジトリの詳細仕様（構成・テスト方針・制約）。日常的なコマンドは [CLAUDE.md](CLAUDE.md) を参照。
 
 ## Architecture
 
@@ -87,23 +87,6 @@ Pandoc は `\graphicspath` を解釈しないので、`--resource-path`（`commo
 - `config/drafter.yaml.example` — LLM設定のサンプル。各利用者がコピーして `config/drafter.yaml` を作成する
 - `config/drafter.yaml` — 実際の設定（**gitignore 対象**）。`DRAFTER_API_KEY` 環境変数でAPIキーを注入
 - llama.cpp の場合は `api_key` 不要（エンドポイントを `http://localhost:8080/v1` に設定するだけ）
-
-### AIエージェント設定
-
-`AGENTS.md` と `.agents/` を正本とし、ツール固有のパスは相対 symlink で共有する。
-編集は常に正本側で行う。
-
-| 正本 | Claude Code | Codex |
-|---|---|---|
-| `AGENTS.md` | `CLAUDE.md` -> `AGENTS.md` | 正本を直接参照 |
-| `.agents/skills/` | `.claude/skills` -> `../.agents/skills` | 正本を直接参照 |
-| `.agents/agents/` | `.claude/agents` -> `../.agents/agents` | 共有不可（下記） |
-
-- カスタムエージェント定義は共有できない。Claude Code は Markdown + YAML frontmatter
-  （`.claude/agents/*.md`）、Codex は TOML（`.codex/agents/*.toml`）で形式が異なる。
-  `.agents/agents/` は Claude Code 形式の正本で、`.codex/agents` は置かない
-- スキルは `<skill-name>/SKILL.md` 形式で共有する。frontmatter の `name` と `description` は必須
-- `.claude/settings.json` は Claude 固有のため実ファイルのまま管理する
 
 ### Fonts
 

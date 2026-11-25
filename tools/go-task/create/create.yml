@@ -1,0 +1,9 @@
+version: '3'
+
+tasks:
+  paper:
+    desc: Create a new paper skeleton (paper required)
+    requires:
+      vars: [paper]
+    cmds:
+      - '{{.DRAFTER}} create-paper --paper {{.paper | shellQuote}}'

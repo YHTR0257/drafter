@@ -1,0 +1,11 @@
+version: '3'
+
+tasks:
+  default:
+    desc: Lint and format TeX (paper required; modifies input)
+    requires:
+      vars: [paper]
+    cmds:
+      - >-
+        {{.DRAFTER}} lint --paper {{.paper | shellQuote}}
+        {{if .main_tex}}--main-tex {{.main_tex | shellQuote}}{{end}}

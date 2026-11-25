@@ -1,0 +1,12 @@
+version: '3'
+
+tasks:
+  setup:
+    desc: Set up the repo interactively (os=macos|wsl; Docker and uv required)
+    interactive: true
+    requires:
+      vars:
+        - name: os
+          enum: [macos, wsl]
+    cmds:
+      - '{{.DRAFTER}} setup --os {{.os | shellQuote}}'

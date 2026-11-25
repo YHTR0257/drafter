@@ -1,0 +1,11 @@
+version: '3'
+
+tasks:
+  default:
+    desc: Review a paper using the configured LLM (paper required)
+    requires:
+      vars: [paper]
+    cmds:
+      - >-
+        {{.DRAFTER}} review --paper {{.paper | shellQuote}}
+        {{if .main_tex}}--main-tex {{.main_tex | shellQuote}}{{end}}

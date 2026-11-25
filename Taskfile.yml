@@ -1,0 +1,68 @@
+version: '3'
+
+includes:
+  docker: ./tools/go-task/docker/docker.yml
+  lint: ./tools/go-task/lint/lint.yml
+  review: ./tools/go-task/review/review.yml
+  compile: ./tools/go-task/compile/compile.yml
+  create: ./tools/go-task/create/create.yml
+  generate: ./tools/go-task/generate/generate.yml
+  setup:
+    taskfile: ./tools/go-task/setup/setup.yml
+    flatten: true
+
+vars:
+  DOCKER_COMPOSE: '{{.DOCKER_COMPOSE | default "docker compose"}}'
+  TASK_HOST_UID:
+    sh: id -u
+  TASK_HOST_GID:
+    sh: id -g
+  DRAFTER: DOCKER_COMPOSE={{.DOCKER_COMPOSE | shellQuote}} uv run drafter
+  COMPOSE: >-
+    HOST_UID={{.TASK_HOST_UID}} HOST_GID={{.TASK_HOST_GID}}
+    {{range .DOCKER_COMPOSE | splitArgs}}{{. | shellQuote}} {{end}}
+
+tasks:
+  default:
+    desc: Show help
+    cmds:
+      - task: help
+  help:
+    desc: Show tasks, examples and options
+    silent: true
+    cmds:
+      - '{{.TASK_EXE | shellQuote}} --list'
+      - |
+        cat <<'HELP'
+
+        Examples:
+          task docker:build
+          task setup os=macos
+          task setup os=wsl
+          task create:paper paper='日本語の 論文名'
+          task compile:pdf paper=my-paper
+          task compile:docx paper=my-paper format=short
+          task compile paper=my-paper to=docx
+          task lint paper=my-paper
+          task review paper=my-paper
+          task compile:templates
+          task generate:fig path=figures/model/model.drawio
+          task generate:fig:drawio path=figures/model/model.drawio
+          task generate:fig:mermaid path=figures/flow/flow.mmd
+          task generate:fig:python path=figures/plot/plot.py
+          task generate:fig:plantuml path=figures/model/model.puml
+
+        Options:
+          paper              Paper directory name under PAPERS_DIR (required)
+          to                 pdf (default) or docx; used by task compile
+          format             article (default), short or review; DOCX layout
+          main_tex           Input file (default: main.tex)
+          word_template      Template filename (default: template-<format>.docx)
+          word_template_dir  Container template directory
+          skip_lint          0 (default) or 1; lint task always runs lint
+
+        Host paths: .env (copy .env.example); host UID/GID are detected automatically.
+        Paper defaults: <PAPERS_DIR>/<paper>/paper.yml; CLI values take precedence.
+        Setup: os=macos|wsl; path prompts create/update .env after confirmation.
+        Figures: path only; output names are defined in each source file.
+        HELP

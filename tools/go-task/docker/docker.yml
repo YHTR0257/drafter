@@ -1,0 +1,20 @@
+version: '3'
+
+tasks:
+  build:
+    desc: Build the paper toolchain image
+    cmds:
+      - '{{.COMPOSE}} build'
+  up:
+    desc: Start an idle container (optional)
+    cmds:
+      - '{{.COMPOSE}} up -d'
+  down:
+    desc: Stop the idle container
+    cmds:
+      - '{{.COMPOSE}} down'
+  bash:
+    desc: Open a disposable container shell
+    interactive: true
+    cmds:
+      - '{{.COMPOSE}} run --rm drafter bash'

@@ -1,0 +1,35 @@
+version: '3'
+
+tasks:
+  fig:
+    desc: Generate a figure (path required; type detected from extension)
+    cmds:
+      - task: figure
+  fig:drawio:
+    desc: Generate a draw.io figure (path required)
+    cmds:
+      - task: figure
+        vars: {mode: drawio}
+  fig:mermaid:
+    desc: Generate a Mermaid figure (path required)
+    cmds:
+      - task: figure
+        vars: {mode: mermaid}
+  fig:python:
+    desc: Generate a Python figure (path required)
+    cmds:
+      - task: figure
+        vars: {mode: python}
+  fig:plantuml:
+    desc: Generate a PlantUML figure (path required)
+    cmds:
+      - task: figure
+        vars: {mode: plantuml}
+  figure:
+    internal: true
+    requires:
+      vars: [path]
+    cmds:
+      - >-
+        {{.DRAFTER}} generate-figure --path {{.path | shellQuote}}
+        {{if .mode}}--mode {{.mode}}{{end}}

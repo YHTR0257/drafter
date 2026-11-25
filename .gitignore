@@ -62,3 +62,4 @@ templates/msword
 .env
 .env.*
 !.env.example
+.task/

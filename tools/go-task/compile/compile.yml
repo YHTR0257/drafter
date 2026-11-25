@@ -1,0 +1,40 @@
+version: '3'
+
+tasks:
+  default:
+    desc: Compile a paper (paper required; to=pdf|docx, default pdf)
+    vars:
+      to: '{{.to | default "pdf"}}'
+    cmds:
+      - task: run
+        vars:
+          output: '{{.to}}'
+  pdf:
+    desc: Compile a paper to PDF (paper required)
+    cmds:
+      - task: run
+        vars: {output: pdf}
+  docx:
+    desc: Compile a paper to DOCX (paper required; format=article|short|review)
+    cmds:
+      - task: run
+        vars: {output: docx}
+  templates:
+    desc: Generate Word templates
+    cmds:
+      - >-
+        {{.DRAFTER}} templates
+        {{if .word_template_dir}}--output-dir {{.word_template_dir | shellQuote}}{{end}}
+  run:
+    internal: true
+    requires:
+      vars: [paper]
+    cmds:
+      - >-
+        {{.DRAFTER}} compile --paper {{.paper | shellQuote}}
+        {{if .output}}--to {{.output | shellQuote}}{{end}}
+        {{if .main_tex}}--main-tex {{.main_tex | shellQuote}}{{end}}
+        {{if .format}}--format {{.format | shellQuote}}{{end}}
+        {{if .word_template}}--word-template {{.word_template | shellQuote}}{{end}}
+        {{if .word_template_dir}}--word-template-dir {{.word_template_dir | shellQuote}}{{end}}
+        {{if .skip_lint}}--skip-lint {{.skip_lint | shellQuote}}{{end}}

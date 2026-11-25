@@ -33,6 +33,15 @@ Each paper directory contains:
 
 Shared bibliography lives in `papers/bib/*.bib`.
 
+### Concept figures (`figures/`, gitignored)
+
+- `blackman-diagram/code/plot_blackman.py`: Blackman diagram の再生成スクリプト。
+  `uv run figures/blackman-diagram/code/plot_blackman.py`（Matplotlib はスクリプト内で依存指定）。
+  同ディレクトリの親に `blackman_diagram.png`（3000 × 2250 px、300 dpi）と SVG を出力。
+  Times New Roman 12pt、10 × 7.5 inch。領域説明・線の注釈・目盛を表示し、軸名は省略する。
+  座標は横軸 `C12/C11`、縦軸 `C44/C11`。無応力の立方晶を対象とし、結合の説明は定性的。
+  フォントは `.devcontainer/fonts/times*.ttf` またはシステムの Times New Roman を使用する。
+
 ### Templates (`templates/`)
 
 - `make/common.mk` — shared Makefile rules for all papers; defines
@@ -125,6 +134,31 @@ Pandoc は `\graphicspath` を解釈しないので、`--resource-path`（`commo
 
 Windows/Office-compatible fonts are bundled in `.devcontainer/fonts/` and referenced by path
 in `main.tex` via `fontspec`/`luatexja-fontspec`.
+
+### Compose feasibility prototype (Issue #2)
+
+- `docker-compose.yml` + 単一の `Dockerfile` でホストからビルドする。
+- ルート `Makefile`: `build` / `up` / `down` / `bash`、
+  `build-pdf` / `build-docx` / `lint` / `review` を提供する。
+  ホスト UID/GID は自動取得する。
+  論文は `PAPER=<name>`、入力は `MAIN_TEX` で指定する。
+  DOCX の体裁は `FORMAT=article|short|review`（既定 article）。出力名は共通の `dist/main.docx`。
+- `scripts/build-paper.sh`: コンテナ内で `uv run` を使い既存 CLI と latexmk を実行。
+  make は呼ばない。既定では lint 失敗で停止する。`SKIP_LINT=1` で出力時のみスキップ可能。
+  `lint` ターゲット自体は常に検査する。共有 bib を検出し、DOCX の既定テンプレートは未生成時に生成する。
+  従来の論文別 `common.mk` は旧環境用として残す。
+- `.env.example`: ホスト UID/GID、論文親ディレクトリ、共有 bib、フォントの絶対パス。
+- リポジトリと論文は書き込み可能、bib とフォントは読み取り専用でマウントする。
+- Python 3.12 とロック済みの実行依存をイメージ内 `/opt` に配置。
+  `UV_NO_SYNC=1` + `PYTHONPATH=/workspace/src` でホスト `.venv` と分離する。
+  依存の変更時は再ビルドが必要。TeX キャッシュは書き込み可能な `/tmp` を使う。
+- `.dockerignore` で依存メタデータ以外を除外し、論文・フォント・認証情報の送信を防ぐ。
+- `scripts/verify-compose.sh`: 一時ディレクトリに日本語・英語・共有文献のサンプルを作り、
+  PDF / DOCX の3体裁、ホスト所有権、任意 UID、読み取り専用マウントを検証する。
+  macOS の Docker Desktop では GID 変換があるため、所有 UID と書き込み可能性を検証する。
+  サンプルと出力は検査用に残す。実論文は変更しない。
+- 検証段階のため旧設定の削除・フォントの移動・ホスト VS Code の設定変更は未実施。
+  WSL の実機検証、chktex の配布、linter hook の実行契機は移行時の確認事項。
 
 ## Testing
 

@@ -1,30 +1,24 @@
 FROM texlive/texlive:latest
 
-ARG TZ
-ENV TZ="$TZ"
-
-ARG CLAUDE_CODE_VERSION=latest
-
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    git \
-    sudo \
-    curl \
-    wget \
-    unzip \
-    nodejs \
-    npm \
-    pandoc \
-    fontconfig \
+    pandoc fontconfig \
     && rm -rf /var/lib/apt/lists/*
 
-# Install npm packages globally
-RUN npm install -g @google/gemini-cli @j178/prek
+ENV UV_PYTHON_INSTALL_DIR=/opt/python \
+    UV_PROJECT_ENVIRONMENT=/opt/drafter-venv
+WORKDIR /opt/drafter
+COPY pyproject.toml uv.lock ./
+RUN uv python install 3.12 \
+    && uv sync --locked --no-dev --no-install-project --python 3.12
 
-ENV DEVCONTAINER=true
-
-# 必要なディレクトリを作成（common-utils featureがvscodeユーザーを作成する）
-RUN mkdir -p /workspace
-
-# フォントのコピーとインストール（.devcontainer/fontsディレクトリから）
-COPY .devcontainer/fonts /usr/share/fonts/ms-fonts/
-RUN fc-cache -fv
+# Dependencies live in the image; project sources are read from the bind mount.
+# Arbitrary host UID/GID must be able to write TeX caches without a passwd entry.
+ENV UV_NO_SYNC=1 \
+    PYTHONPATH=/workspace/src \
+    HOME=/tmp \
+    TEXMFVAR=/tmp/texmf-var \
+    TEXMFCONFIG=/tmp/texmf-config \
+    TEXMFCACHE=/tmp/texmf-var
+WORKDIR /workspace
+CMD ["sleep", "infinity"]

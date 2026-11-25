@@ -8,7 +8,11 @@ dependencies = [
     "openai>=1.0.0",
     "pyyaml>=6.0",
     "click>=8.0",
+    "python-dotenv>=1.0",
 ]
+
+[project.scripts]
+drafter = "drafter.cli:main"
 
 [build-system]
 requires = ["hatchling"]

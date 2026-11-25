@@ -1,5 +1,7 @@
-# The image only needs dependency metadata, never papers, fonts or credentials.
+# Only package sources and dependency metadata; never papers, fonts or credentials.
 **
 !Dockerfile
 !pyproject.toml
 !uv.lock
+!src/
+!src/**

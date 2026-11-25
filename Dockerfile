@@ -12,9 +12,13 @@ COPY pyproject.toml uv.lock ./
 RUN uv python install 3.12 \
     && uv sync --locked --no-dev --no-install-project --python 3.12
 
+COPY src ./src
+RUN uv sync --locked --no-dev --python 3.12
+
 # Dependencies live in the image; project sources are read from the bind mount.
 # Arbitrary host UID/GID must be able to write TeX caches without a passwd entry.
 ENV UV_NO_SYNC=1 \
+    DRAFTER_IN_CONTAINER=1 \
     PYTHONPATH=/workspace/src \
     HOME=/tmp \
     TEXMFVAR=/tmp/texmf-var \

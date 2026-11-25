@@ -9,3 +9,6 @@ max_line_length = 100
 
 [*.{drawio,svg}]
 max_line_length = off
+
+[.agents/skills/**/SKILL.md]
+max_line_length = off

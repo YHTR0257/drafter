@@ -1,0 +1,109 @@
+<mxfile host="Electron" compressed="false">
+  <diagram id="flow" name="modules">
+    <mxGraphModel background="#FFFFFF" page="0" grid="1">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="node-cli" value="cli.py" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="560" y="30" width="230" height="80" />
+        </mxCell>
+        <mxCell id="node-workspace" value="workspace.py" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="230" width="230" height="80" />
+        </mxCell>
+        <mxCell id="node-figures" value="figures.py" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="300" y="230" width="230" height="80" />
+        </mxCell>
+        <mxCell id="node-converter" value="converter/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="560" y="230" width="230" height="80" />
+        </mxCell>
+        <mxCell id="node-linter" value="linter/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="820" y="230" width="230" height="80" />
+        </mxCell>
+        <mxCell id="node-reviewer" value="reviewer/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="1080" y="230" width="230" height="80" />
+        </mxCell>
+        <mxCell id="node-formatter" value="formatter/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="560" y="460" width="230" height="80" />
+        </mxCell>
+        <mxCell id="node-common" value="common/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="950" y="460" width="230" height="80" />
+        </mxCell>
+        <mxCell id="e0" value="ホストで呼び出す" source="node-cli" target="node-workspace" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=13;fontColor=#000000;strokeColor=#333333;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="675" y="130" />
+              <mxPoint x="155" y="130" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e1" value="ホストで呼び出す" source="node-cli" target="node-figures" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=13;fontColor=#000000;strokeColor=#333333;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="675" y="148" />
+              <mxPoint x="415" y="148" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e2" value="コンテナで呼び出す" source="node-cli" target="node-converter" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=13;fontColor=#000000;strokeColor=#333333;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="675" y="166" />
+              <mxPoint x="675" y="166" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e3" value="コンテナで呼び出す" source="node-cli" target="node-linter" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=13;fontColor=#000000;strokeColor=#333333;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="675" y="184" />
+              <mxPoint x="935" y="184" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e4" value="コンテナで呼び出す" source="node-cli" target="node-reviewer" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=13;fontColor=#000000;strokeColor=#333333;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="675" y="202" />
+              <mxPoint x="1195" y="202" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e5" value="整形する" source="node-linter" target="node-formatter" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=13;fontColor=#000000;strokeColor=#333333;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="935" y="340" />
+              <mxPoint x="675" y="340" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e6" value="解析する" source="node-linter" target="node-common" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=13;fontColor=#000000;strokeColor=#333333;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="935" y="362" />
+              <mxPoint x="1065" y="362" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e7" value="TeXを展開する" source="node-converter" target="node-common" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=13;fontColor=#000000;strokeColor=#333333;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="675" y="384" />
+              <mxPoint x="1065" y="384" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e8" value="解析・設定を参照する" source="node-reviewer" target="node-common" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=13;fontColor=#000000;strokeColor=#333333;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="1195" y="406" />
+              <mxPoint x="1065" y="406" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e9" value="解析する" source="node-formatter" target="node-common" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=13;fontColor=#000000;strokeColor=#333333;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

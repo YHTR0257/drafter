@@ -1,0 +1,66 @@
+<mxfile host="Electron" compressed="false">
+  <diagram id="flow" name="overview">
+    <mxGraphModel background="#FFFFFF" page="0" grid="1">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="node-task" value="Taskfile.yml" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="40" width="230" height="80" />
+        </mxCell>
+        <mxCell id="node-definitions" value="tools/go-task/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="340" y="40" width="230" height="80" />
+        </mxCell>
+        <mxCell id="node-host" value="Host drafter CLI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="640" y="40" width="230" height="80" />
+        </mxCell>
+        <mxCell id="node-docker" value="Docker Composeを呼び出す" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="940" y="40" width="230" height="80" />
+        </mxCell>
+        <mxCell id="node-container" value="Container drafter CLI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="940" y="220" width="230" height="80" />
+        </mxCell>
+        <mxCell id="node-processing" value="lint / compile / review" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="940" y="400" width="230" height="80" />
+        </mxCell>
+        <mxCell id="node-artifacts" value="PDF / DOCX / report" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontColor=#000000;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="940" y="580" width="230" height="80" />
+        </mxCell>
+        <mxCell id="node-workspace" value="workspace: setup / create" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="520" y="250" width="230" height="80" />
+        </mxCell>
+        <mxCell id="node-figures" value="figures: host renderers" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="520" y="460" width="230" height="80" />
+        </mxCell>
+        <mxCell id="e0" value="読み込む" source="node-task" target="node-definitions" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=13;fontColor=#000000;strokeColor=#333333;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e1" value="uv run drafter" source="node-definitions" target="node-host" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=13;fontColor=#000000;strokeColor=#333333;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e2" value="論文処理を渡す" source="node-host" target="node-docker" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=13;fontColor=#000000;strokeColor=#333333;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e3" value="uv run drafter" source="node-docker" target="node-container" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=13;fontColor=#000000;strokeColor=#333333;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e4" value="Python処理を呼び出す" source="node-container" target="node-processing" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=13;fontColor=#000000;strokeColor=#333333;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e5" value="生成する" source="node-processing" target="node-artifacts" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=13;fontColor=#000000;strokeColor=#333333;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e6" value="ホストで処理する" source="node-host" target="node-workspace" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=13;fontColor=#000000;strokeColor=#333333;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e7" value="ホストで処理する" source="node-host" target="node-figures" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=13;fontColor=#000000;strokeColor=#333333;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=1;entryY=0.5;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="800" y="180" />
+              <mxPoint x="800" y="500" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

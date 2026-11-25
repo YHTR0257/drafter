@@ -12,17 +12,24 @@ in this repository. `CLAUDE.md` is a symlink to this file; edit `AGENTS.md`.
 ### Container builds (run on the host)
 
 ```bash
-make build                          # build the Docker image
-make up                             # start an idle container (optional)
-make bash                           # open a disposable shell
-make build-pdf PAPER=<paper-name>
-make build-docx PAPER=<paper-name>
-make build-docx PAPER=<paper-name> FORMAT=short  # article / short / review
-make down
+task --list                         # list available tasks
+task help                           # commands, examples and variables
+task setup os=macos                 # or os=wsl; interactive setup
+task create:paper paper=<paper-name>
+task docker:build                   # build the Docker image
+task docker:up                      # start an idle container (optional)
+task docker:bash                    # open a disposable shell
+task compile:pdf paper=<paper-name>
+task compile:docx paper=<paper-name>
+task compile:docx paper=<paper-name> format=short  # article / short / review
+task docker:down
 ```
 
-Compose reads host paths from `.env` (see `.env.example`). Make detects host UID/GID.
-Container tools use `uv run`; make runs on the host.
+`Taskfile.yml` includes definitions from `tools/go-task/`; see its README for wiring.
+Tasks call `uv run drafter <subcommand>`. The CLI reads `.env` and detects host UID/GID.
+Paper processing runs in Compose; creation, setup and figure generation run on the host.
+Optional `<PAPERS_DIR>/<paper>/paper.yml` provides defaults; CLI values take precedence.
+Setup and repository layout live under `docs/`; README links to them.
 
 ### Python (run on the host for development)
 
@@ -35,21 +42,17 @@ uv run ruff check --fix src/         # lint
 uv run ruff format src/              # format
 ```
 
-### Legacy paper build (existing local environment, `papers/<paper-name>/`)
+### Paper checks (run on the host)
 
 ```bash
-make pdf         # lint → LaTeX → dist/main.pdf
-make docx        # lint → Pandoc → dist/main.docx
-make docx-review # 校閲用DOCX（1段組・行間2行・行番号） → dist/main-review.docx
-make review      # AI review via drafter.reviewer.pipeline → dist/review-report.md
-make lint        # run drafter.linter.pipeline only
-make clean       # remove dist/
+task review paper=<paper-name> # AI review → dist/review-report.md
+task lint paper=<paper-name>   # check and format TeX (modifies input)
 ```
 
 ### Word templates (run on the host)
 
 ```bash
-make word-templates  # generate Word templates through the container
+task compile:templates  # generate Word templates through the container
 ```
 
 ### Pre-commit hooks (`prek`)

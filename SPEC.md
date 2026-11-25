@@ -28,7 +28,7 @@ Each paper directory contains:
 - `main.tex` — top-level document (inputs section files)
 - `sections/` — per-section `.tex` files (introduction, method, result, discussion, conclusion)
 - `.latexmkrc` — LuaLaTeX build config
-- `Makefile` — includes `../../templates/make/common.mk`
+- `paper.yml` — optional defaults for go-task (string values)
 - `dist/` — build output (gitignored)
 
 Shared bibliography lives in `papers/bib/*.bib`.
@@ -44,8 +44,6 @@ Shared bibliography lives in `papers/bib/*.bib`.
 
 ### Templates (`templates/`)
 
-- `make/common.mk` — shared Makefile rules for all papers; defines
-  `pdf`, `docx`, `docx-review`, `review`, `lint`, `clean` targets
 - `rules/*.yaml` — section-structure rules (used by the reviewer); one file per section
   (abstract, introduction, method, result, discussion, title)
 - `pandoc/defaults.yaml` — Pandoc 変換のデフォルト設定（`from: latex+raw_tex`, `to: docx`）
@@ -62,11 +60,11 @@ docx ライターがそれを捨ててしまう（本文が丸ごと消える）
 2. その中間ファイルを Pandoc に渡す
 
 中間ファイルは `dist/` にあるので `make clean` で消える。出力ファイル名から導くため、
-`docx` と `docx-review` を並列生成しても衝突しない。
+出力名が異なる場合は中間ファイルも分かれる。CLIの各DOCX体裁は同じ出力名を使うため並列実行しない。
 
 中間ファイルが `dist/` にある結果、Pandoc の既定の画像探索先も `dist/` になる。
-Pandoc は `\graphicspath` を解釈しないので、`--resource-path`（`common.mk` の
-`PANDOC_RESOURCE_FLAGS`）で `.` と `$(FIGURES_DIR)` を明示している。
+Pandoc は `\graphicspath` を解釈しないので、`cli.py`の
+`--resource-path`で`.`と`/workspace/figures`を明示している。
 
 #### Word テンプレート
 
@@ -76,7 +74,7 @@ Pandoc は `\graphicspath` を解釈しないので、`--resource-path`（`commo
 
 | ファイル | 用途 | 本文 | 1行 | 行送り |
 |---|---|---|---|---|
-| `template-article.docx` | 長文。1段組・章節項の4階層を採番・章ごとに改ページ。`WORD_TEMPLATE` の既定値 | 12pt | 40.1字 | 1.67行 |
+| `template-article.docx` | 長文。1段組・章節項の4階層を採番・章ごとに改ページ。`word_template` の既定値 | 12pt | 40.1字 | 1.67行 |
 | `template-review.docx` | 校閲用。1段組・行番号あり・章見出しのみ採番 | 12pt | 40.1字 | 2.00行 |
 | `template-short.docx` | ショートペーパー。2段組・章節の2階層を採番・改ページなし | 10.5pt | 21.9字 | 1.67行 |
 
@@ -88,7 +86,10 @@ Pandoc は `\graphicspath` を解釈しないので、`--resource-path`（`commo
 - **2段組のみ本文 10.5pt**（`COMPACT_BODY_SIZE`）。12pt では 1 段が 17 字しか入らない
   行グリッドも 350（`COMPACT_LINE_PITCH`）に合わせ、article と同じ約 1.67 行の比率にしている
 
-生成物は gitignore 対象なので、クローン直後は `make word-templates` が必要。
+生成物はgitignore対象。`task compile:templates`または初回DOCX生成で作成する。
+
+論文ごとの既定は`<PAPERS_DIR>/<paper>/paper.yml`で指定する。
+例: `word_template: 0_Article_template.docx`。コマンドライン指定が優先。
 テンプレートの体裁を変えるときは docx を直接編集せず `word_template.py` を修正して再生成する。
 
 ### 設定ファイル (`config/`)
@@ -132,37 +133,30 @@ Pandoc は `\graphicspath` を解釈しないので、`--resource-path`（`commo
 
 ### Fonts
 
-Windows/Office-compatible fonts are bundled in `.devcontainer/fonts/` and referenced by path
-in `main.tex` via `fontspec`/`luatexja-fontspec`.
+フォントはホストの`FONTS_DIR`から読み取り専用マウントする。
+`main.tex`は`/usr/share/fonts/ms-fonts/`をfontspec／luatexja-fontspecで参照する。
 
-### Compose feasibility prototype (Issue #2)
+### Task / Compose builds
 
-- `docker-compose.yml` + 単一の `Dockerfile` でホストからビルドする。
-- ルート `Makefile`: `build` / `up` / `down` / `bash`、
-  `build-pdf` / `build-docx` / `lint` / `review` を提供する。
-  ホスト UID/GID は自動取得する。
-  論文は `PAPER=<name>`、入力は `MAIN_TEX` で指定する。
-  DOCX の体裁は `FORMAT=article|short|review`（既定 article）。出力名は共通の `dist/main.docx`。
-- `scripts/build-paper.sh`: コンテナ内で `uv run` を使い既存 CLI と latexmk を実行。
-  make は呼ばない。既定では lint 失敗で停止する。`SKIP_LINT=1` で出力時のみスキップ可能。
-  `lint` ターゲット自体は常に検査する。共有 bib を検出し、DOCX の既定テンプレートは未生成時に生成する。
-  従来の論文別 `common.mk` は旧環境用として残す。
-- `.env.example`: ホスト UID/GID、論文親ディレクトリ、共有 bib、フォントの絶対パス。
-- リポジトリと論文は書き込み可能、bib とフォントは読み取り専用でマウントする。
-- Python 3.12 とロック済みの実行依存をイメージ内 `/opt` に配置。
-  `UV_NO_SYNC=1` + `PYTHONPATH=/workspace/src` でホスト `.venv` と分離する。
-  依存の変更時は再ビルドが必要。TeX キャッシュは書き込み可能な `/tmp` を使う。
-- `.dockerignore` で依存メタデータ以外を除外し、論文・フォント・認証情報の送信を防ぐ。
-- `scripts/verify-compose.sh`: 一時ディレクトリに日本語・英語・共有文献のサンプルを作り、
-  PDF / DOCX の3体裁、ホスト所有権、任意 UID、読み取り専用マウントを検証する。
-  macOS の Docker Desktop では GID 変換があるため、所有 UID と書き込み可能性を検証する。
-  サンプルと出力は検査用に残す。実論文は変更しない。
-- 検証段階のため旧設定の削除・フォントの移動・ホスト VS Code の設定変更は未実施。
-  WSL の実機検証、chktex の配布、linter hook の実行契機は移行時の確認事項。
+- 実行境界・配置は[構成](docs/architecture/overview.md)、
+  各TaskとCLIの対応は[配線表](tools/go-task/README.md)を正とする。
+- `uv run drafter <subcommand>`が公開CLI。`pyproject.toml`のconsole scriptで定義する。
+  論文別設定はCLI側で解決し、Taskは引数を渡す。
+- コンテナは`DRAFTER_IN_CONTAINER=1`で再転送を防止する。
+  ホストのuv環境とイメージ内`/opt/drafter-venv`を分離する。
+- 依存とCLIエントリポイントはイメージに導入し、実行時のソースはバインドマウントから読む。
+  `.dockerignore`は依存メタデータと`src/`だけを許可する。
+- [セットアップ](docs/operations/setup.md)、[Make移行](docs/operations/migration.md)、
+  [図生成](docs/operations/figures.md)を参照。
+- `scripts/verify-compose.sh`は一時ディレクトリの論文をTaskで作成・検査・出力し、
+  PDF／DOCXの3体裁、日本語・空白入りパス、ホスト所有権、任意UID、
+  bib・フォントの読み取り専用マウントを確認する。実論文には触れない。
 
 ## Testing
 
-テストは `src/drafter/` の構造をミラーした `tests/drafter/` に配置する。
+テストは`src/drafter/`の構造をミラーした`tests/drafter/`に配置する。
+Taskの引数転送は`tests/test_taskfile.py`で実CLIを使わず検査する。
+`TASK_BIN`にgo-taskの実行ファイルを指定できる。未導入時はTaskのテストだけスキップする。
 
 ```
 src/drafter/                    tests/drafter/

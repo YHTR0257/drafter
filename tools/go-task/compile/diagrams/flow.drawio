@@ -1,0 +1,55 @@
+<mxfile host="Electron" compressed="false">
+  <diagram id="flow" name="flow">
+    <mxGraphModel background="#FFFFFF" page="0" grid="1">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="node-0" value="コンパイルタスクを実行する" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="60" y="30" width="230" height="80" />
+        </mxCell>
+        <mxCell id="node-1" value="ホストCLIを呼び出す" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="60" y="160" width="230" height="80" />
+        </mxCell>
+        <mxCell id="node-2" value="コンテナを起動する" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="60" y="290" width="230" height="80" />
+        </mxCell>
+        <mxCell id="node-3" value="コンテナCLIを呼び出す" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="60" y="420" width="230" height="80" />
+        </mxCell>
+        <mxCell id="node-4" value="TeXを整形・検査する" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="60" y="550" width="230" height="80" />
+        </mxCell>
+        <mxCell id="node-5" value="指定形式へ変換する" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="60" y="680" width="230" height="80" />
+        </mxCell>
+        <mxCell id="node-6" value="dist/へ成果物を保存する" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontColor=#000000;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="60" y="810" width="230" height="80" />
+        </mxCell>
+        <mxCell id="node-fail" value="エラーを返して終了する" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontColor=#000000;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="380" y="550" width="230" height="80" />
+        </mxCell>
+        <mxCell id="e0" value="呼び出す" source="node-0" target="node-1" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=13;fontColor=#000000;strokeColor=#333333;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e1" value="" source="node-1" target="node-2" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=13;fontColor=#000000;strokeColor=#333333;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e2" value="" source="node-2" target="node-3" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=13;fontColor=#000000;strokeColor=#333333;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e3" value="" source="node-3" target="node-4" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=13;fontColor=#000000;strokeColor=#333333;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e4" value="検査に成功する・省略する" source="node-4" target="node-5" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=13;fontColor=#000000;strokeColor=#333333;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e5" value="" source="node-5" target="node-6" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=13;fontColor=#000000;strokeColor=#333333;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e6" value="検査に失敗する" source="node-4" target="node-fail" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=13;fontColor=#000000;strokeColor=#333333;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
